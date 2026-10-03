@@ -66,6 +66,19 @@ function addCustomer(): void {
     console.log("顧客を登録しました:", customer);
 }
 
+// 顧客1件分のテーブル行を生成する関数（textContentでXSSを防止）
+function createCustomerRow(customer: Customer): HTMLTableRowElement {
+    const row = document.createElement("tr");
+
+    [customer.name, customer.email, customer.phone].forEach(function(value: string): void {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
+    });
+
+    return row;
+}
+
 // 顧客リストをテーブルに表示する関数
 function displayCustomers(): void {
     const tableBody = document.getElementById("customerList") as HTMLElement;
@@ -81,13 +94,7 @@ function displayCustomers(): void {
 
     // 全顧客データをループ処理
     customers.forEach(function(customer: Customer): void {
-        const row: string = "<tr>" +
-                "<td>" + customer.name + "</td>" +
-                "<td>" + customer.email + "</td>" +
-                "<td>" + customer.phone + "</td>" +
-                "</tr>";
-
-        tableBody.innerHTML += row;
+        tableBody.appendChild(createCustomerRow(customer));
     });
 }
 
@@ -119,13 +126,7 @@ function searchCustomer(): void {
 
     // 検索結果をテーブルに表示
     filteredCustomers.forEach(function(customer: Customer): void {
-        const row: string = "<tr>" +
-                "<td>" + customer.name + "</td>" +
-                "<td>" + customer.email + "</td>" +
-                "<td>" + customer.phone + "</td>" +
-                "</tr>";
-
-        tableBody.innerHTML += row;
+        tableBody.appendChild(createCustomerRow(customer));
     });
 
     console.log("検索結果:", filteredCustomers.length + "件");
